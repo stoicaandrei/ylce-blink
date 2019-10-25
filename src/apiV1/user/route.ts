@@ -11,6 +11,7 @@ user.post('/delete/:id', controller.remove);
 
 user.post('/update', verifyToken, controller.update);
 user.post('/top-up', verifyToken, controller.topUp);
+user.post('/withdraw', verifyToken, controller.withdraw);
 
 
 export default user;

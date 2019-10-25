@@ -110,4 +110,30 @@ export default class UserController {
       res.success()
     })
   }
+
+  /**
+   * @api {post} /v1/user/withdraw Withdraw
+   * @apiName Withdraw
+   * @apiGroup User
+   * 
+   * @apiHeader {String} Authorization Bearer token
+   * 
+   * @apiParam {Number} amount
+   */
+  public withdraw = (req: Request, res: Response) => {
+    let { amount } = req.body;
+    amount *= -1;
+
+    const updateUser = (cb: Function) =>
+      User.findOneAndUpdate({ email: req.email }, { $inc: { amount } }, (err: Error) => cb(err));
+
+    const updateOffer = (cb: Function) =>
+      Offer.findOneAndUpdate({ userEmail: req.email }, { $inc: { amount } }, (err: Error) => cb(err));
+
+    async.parallel([updateUser, updateOffer], (err) => {
+      if (err) return res.error(err);
+
+      res.success()
+    })
+  }
 }

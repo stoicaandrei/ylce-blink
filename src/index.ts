@@ -1,6 +1,6 @@
+import './config/db'
 import app from './App';
 import CONFIG from './config/config'
-import './config/db'
 
 const PORT = CONFIG.PORT
 

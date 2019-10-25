@@ -14,7 +14,8 @@ const OfferSchema = new Schema({
 
   amount: {
     type: Number,
-    min: 1
+    min: [0, 'Not enough money'],
+    default: 0
   },
 
   rate: {
@@ -24,7 +25,7 @@ const OfferSchema = new Schema({
 
   minCreditScore: {
     type: Number,
-    min: 0,
+    min: 1,
     max: 5
   },
 

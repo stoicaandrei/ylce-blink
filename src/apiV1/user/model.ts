@@ -55,7 +55,9 @@ const UserSchema = new Schema({
 
   amount: {
     type: Number,
-    min: 0
+    min: [0, 'Not enough money'],
+    max: 100,
+    default: 0
   }
 }, {
   timestamps: true,
