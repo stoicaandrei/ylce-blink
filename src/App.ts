@@ -6,19 +6,7 @@ import morgan from 'morgan';
 import apiV1 from './apiV1';
 import * as errorHandler from './helpers/errorHandler';
 
-import customResponses from './middlewares/customResponses';
-
-declare global {
-  namespace Express {
-    interface Request {
-      email?: string
-    }
-    interface Response {
-      success: (data?: any) => any,
-      error: (message?: any, status?: number) => any
-    }
-  }
-}
+import customResponses from './helpers/customResponses';
 
 class App {
   public express: express.Application;
@@ -50,6 +38,18 @@ class App {
   private catchErrors(): void {
     this.express.use(errorHandler.notFound);
     this.express.use(errorHandler.internalServerError);
+  }
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      email?: string
+    }
+    interface Response {
+      success: (data?: any) => any,
+      error: (message?: any, status?: number) => any
+    }
   }
 }
 

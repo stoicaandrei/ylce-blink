@@ -45,4 +45,8 @@ export default class UserController {
       return res.success()
     })
   }
+
+  public topUp = (req: Request, res: Response) => {
+
+  }
 }

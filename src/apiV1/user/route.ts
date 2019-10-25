@@ -1,12 +1,12 @@
 import { Router } from 'express';
-// import verifyToken from '../../helpers/verifyToken';
+import verifyToken from '../../helpers/verifyToken';
 import Controller from './controller';
 
 const user: Router = Router();
 const controller = new Controller();
 
 // Retrieve all Users
-user.get('/find-all', controller.findAll);
+user.get('/find-all', verifyToken, controller.findAll);
 
 // Retrieve a Specific User
 user.get('/:id', controller.findOne);
