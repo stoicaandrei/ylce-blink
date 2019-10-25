@@ -16,16 +16,21 @@ export default class AuthController {
    * @apiName Register
    * @apiGroup Auth
    * 
+   * @apiParam {String} firstName
+   * @apiParam {String} lastName
    * @apiParam {String} email
    * @apiParam {String} password
    * 
    * @apiSuccess {String} accessToken
    */
   public register = (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { firstName, lastName, email, password } = req.body;
+
+    if (!firstName || !lastName || !email || !password)
+      return res.error('firstName, lastName, email, password required');
 
     const hashPassword = async.apply(bcrypt.hash, password, config.SALT_ROUNDS);
-    const createUser = (hash: string, cb: Function) => User.create({ email, password: hash }, cb);
+    const createUser = (hash: string, cb: Function) => User.create({ firstName, lastName, email, password: hash }, cb);
 
     async.waterfall([hashPassword, createUser],
       (err, user) => {
@@ -49,6 +54,9 @@ export default class AuthController {
    */
   public authenticate = (req: Request, res: Response) => {
     const { email, password } = req.body;
+
+    if (!email || !password)
+      return res.error('email, password required');
 
     const getUser = (cb: Function) => User.findOne({ email }, 'email password', cb);
     const comparePassword = (user: IUser, cb: Function) => {
