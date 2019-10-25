@@ -12,7 +12,7 @@ const generateToken = (data: object): string => {
 
 export default class AuthController {
   /**
-   * @api {post} v1/auth/register Register
+   * @api {post} /v1/auth/register Register
    * @apiName Register
    * @apiGroup Auth
    * 
@@ -38,7 +38,7 @@ export default class AuthController {
   }
 
   /**
-   * @api {post} v1/auth/login Login
+   * @api {post} /v1/auth/login Login
    * @apiName Login
    * @apiGroup Auth
    * 
