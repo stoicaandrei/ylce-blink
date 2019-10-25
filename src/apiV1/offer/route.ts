@@ -8,4 +8,4 @@ const controller = new Controller();
 offer.post('/create', verifyToken, controller.create);
 offer.post('/update', verifyToken, controller.update);
 
-export default user;
+export default offer;
