@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 
 interface IOffer {
-  userId: Schema.Types.ObjectId,
+  userEmail: string,
   amount: number,
   rate: number,
   minCreditScore: number,
@@ -10,7 +10,7 @@ interface IOffer {
 }
 
 const OfferSchema = new Schema({
-  userId: Schema.Types.ObjectId,
+  userEmail: String,
 
   amount: {
     type: Number,
@@ -25,7 +25,7 @@ const OfferSchema = new Schema({
   minCreditScore: {
     type: Number,
     min: 0,
-    max: 10
+    max: 5
   },
 
   maxPeriod: {
