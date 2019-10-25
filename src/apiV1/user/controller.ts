@@ -1,7 +1,9 @@
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import config from '../../config/config';
+
 import User from './model';
+import Offer from '../offer/model';
 
 import _ from 'lodash';
 
@@ -77,6 +79,16 @@ export default class UserController {
     if (_.isEmpty(data)) return res.error('Empty arguments');
 
     User.findOneAndUpdate({ email: req.email }, data, (err) => {
+      if (err) return res.error(err);
+
+      res.success();
+    })
+  }
+
+  public topUp = (req: Request, res: Response) => {
+    const { amount } = req.body;
+
+    const updateUser = User.findOneAndUpdate({ email: req.email }, { $inc: { amount } }, (err: Error) => {
       if (err) return res.error(err);
 
       res.success();
