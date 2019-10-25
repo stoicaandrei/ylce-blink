@@ -8,7 +8,8 @@ export interface IUser {
   country: string,
   employmentIndustry: string,
   incomeBracket: string,
-  amount: number
+  amount: number,
+  creditScore: number,
 }
 
 const UserSchema = new Schema({
@@ -58,6 +59,12 @@ const UserSchema = new Schema({
     min: [0, 'Not enough money'],
     max: 100,
     default: 0
+  },
+
+  creditScore: {
+    type: Number,
+    min: 1,
+    max: 5
   }
 }, {
   timestamps: true,

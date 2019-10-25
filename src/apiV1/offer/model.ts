@@ -32,6 +32,12 @@ const OfferSchema = new Schema({
   maxPeriod: {
     type: Number,
     min: 1
+  },
+
+  risk: {
+    type: Number,
+    min: 1,
+    max: 5
   }
 }, {
   timestamps: true,
