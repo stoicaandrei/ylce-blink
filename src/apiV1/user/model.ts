@@ -17,12 +17,23 @@ const UserSchema = new Schema({
     unique: true,
     match: /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/,
     required: true,
-    trim: true
+    trim: true,
+    index: true
   },
 
   password: {
     type: String,
     required: true,
+    trim: true
+  },
+
+  firstName: {
+    type: String,
+    trim: true
+  },
+
+  lastName: {
+    type: String,
     trim: true
   },
 

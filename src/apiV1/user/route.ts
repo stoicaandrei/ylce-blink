@@ -11,10 +11,10 @@ user.get('/find-all', verifyToken, controller.findAll);
 // Retrieve a Specific User
 user.get('/:id', controller.findOne);
 
-// Update a User with Id
-user.post('/update/:id', controller.update);
-
 // Delete a User with Id
 user.post('/delete/:id', controller.remove);
+
+user.post('/update', verifyToken, controller.update);
+
 
 export default user;

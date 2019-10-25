@@ -3,6 +3,8 @@ import { Request, Response } from 'express';
 import config from '../../config/config';
 import User from './model';
 
+import _ from 'lodash';
+
 export default class UserController {
   public findAll = (req: Request, res: Response) => {
     User.find({}, (err, users) => {
@@ -25,17 +27,6 @@ export default class UserController {
     })
   }
 
-  public update = (req: Request, res: Response) => {
-    const { name, lastName, email, password } = req.body;
-    const id = req.params.id;
-
-    User.findByIdAndUpdate(id, { name, lastName, email, password }, (err) => {
-      if (err) return res.error(err)
-
-      return res.success()
-    })
-  }
-
   public remove = (req: Request, res: Response) => {
     const id = req.params.id;
 
@@ -46,7 +37,47 @@ export default class UserController {
     })
   }
 
-  public topUp = (req: Request, res: Response) => {
+  /**
+   * @api {post} /v1/user/update Update user info
+   * @apiName Update
+   * @apiGroup User
+   * 
+   * @apiHeader {String} Authorization Bearer token
+   * 
+   * @apiParam {String} [firstName]
+   * @apiParam {String} [lastName]
+   * @apiParam {String} [birthDate]
+   * @apiParam {String} [country]
+   * @apiParam {String} [employmentIndustry]
+   * @apiParam {String} [incomeBracket]
+   */
+  public update = (req: Request, res: Response) => {
+    const {
+      firstName,
+      lastName,
+      birthDate,
+      country,
+      employmentIndustry,
+      incomeBracket
+    } = req.body;
 
+    // provisory data
+    let _data = {
+      firstName,
+      lastName,
+      birthDate,
+      country,
+      employmentIndustry,
+      incomeBracket
+    }
+
+    // cleaned data
+    const data = _.omitBy(_data, _.isUndefined);
+
+    User.findOneAndUpdate({ email: req.email }, data, (err) => {
+      if (err) return res.error(err);
+
+      res.success();
+    })
   }
 }
