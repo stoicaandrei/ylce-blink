@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 
 import Offer from './model';
+import User, { IUser } from '../user/model';
+
+import async from 'async';
 
 export default class OfferController {
   /**
@@ -24,7 +27,12 @@ export default class OfferController {
     if (!maxPeriod || !risk || !rate)
       return res.error('maxPeriod, risk, rate required');
 
-    Offer.create({ userEmail: req.email, maxPeriod, risk, rate }, (err: Error) => {
+    const getUser = (cb: Function) => User.findOne({ email: req.email }, 'amount', cb);
+
+    const createOffer = (user: IUser, cb: Function) =>
+      Offer.create({ userEmail: req.email, maxPeriod, risk, rate, amount: user.amount }, cb)
+
+    async.waterfall([getUser, createOffer], (err) => {
       if (err) return res.error(err);
 
       res.success()
