@@ -22,6 +22,7 @@ export default class AuthController {
    * @apiParam {String} password
    * 
    * @apiSuccess {String} accessToken
+   * @apiSuccess {Object} user
    */
   public register = (req: Request, res: Response) => {
     const { firstName, lastName, email, password } = req.body;
@@ -38,7 +39,7 @@ export default class AuthController {
 
         const accessToken = generateToken({ email });
 
-        return res.success({ accessToken })
+        return res.success({ user, accessToken })
       })
   }
 
@@ -51,6 +52,7 @@ export default class AuthController {
    * @apiParam {String} password
    * 
    * @apiSuccess {String} accessToken
+   * @apiSuccess {Object} user
    */
   public authenticate = (req: Request, res: Response) => {
     const { email, password } = req.body;
@@ -58,7 +60,7 @@ export default class AuthController {
     if (!email || !password)
       return res.error('email, password required');
 
-    const getUser = (cb: Function) => User.findOne({ email }, 'email password', cb);
+    const getUser = (cb: Function) => User.findOne({ email }, '-password -createdAt -updatedAt', cb);
     const comparePassword = (user: IUser, cb: Function) => {
       if (!user) return cb('Invalid credentials');
 
