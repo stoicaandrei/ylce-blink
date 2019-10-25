@@ -1,27 +1,17 @@
 import * as mongoose from 'mongoose';
-import { Document, Schema } from 'mongoose'
+import { Document, Schema } from 'mongoose';
 
-interface IUser {
-  name: string,
-  lastName: string,
+export interface IUser {
   email: string,
-  password: string
-}
-
-interface IUserModel extends IUser, Document {
-  // Just to please typescript
+  password: string,
+  birthDate: Date,
+  country: string,
+  employmentIndustry: string,
+  incomeBracket: string,
+  amount: number
 }
 
 const UserSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  lastName: {
-    type: String,
-    required: true
-  },
   email: {
     type: String,
     unique: true,
@@ -29,14 +19,40 @@ const UserSchema = new Schema({
     required: true,
     trim: true
   },
+
   password: {
     type: String,
     required: true,
     trim: true
+  },
+
+  birthDate: {
+    type: Date
+  },
+
+  country: {
+    type: String
+  },
+
+  employmentIndustry: {
+    type: String
+  },
+
+  incomeBracket: {
+    type: String
+  },
+
+  amount: {
+    type: Number,
+    min: 0
   }
 }, {
   timestamps: true,
   useNestedStrict: true
 });
+
+interface IUserModel extends IUser, Document {
+  // Just to please typescript
+}
 
 export default mongoose.model<IUserModel>('User', UserSchema);

@@ -7,7 +7,7 @@ export default (async () => {
   try {
     await mongoose.connect(
       CONFIG.DB_HOST,
-      { useNewUrlParser: true }
+      { useNewUrlParser: true, useUnifiedTopology: true }
     );
   } catch (err) {
     console.log(`${err} \nCould not Connect to the Database. Exiting Now...`);
