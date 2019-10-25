@@ -23,6 +23,9 @@ export default class OfferController {
       rate
     } = req.body;
 
+    if (!amount || !maxPeriod || !risk || !rate)
+      return res.error('amount, maxPeriod, risk, rate required');
+
     Offer.create({ userEmail: req.email, amount, maxPeriod, risk, rate }, (err: Error) => {
       if (err) return res.error(err);
 
@@ -47,6 +50,9 @@ export default class OfferController {
       risk,
       rate
     } = req.body;
+
+    if (!maxPeriod || !risk || !rate)
+      return res.error('maxPeriod, risk, rate required');
 
     Offer.findOneAndUpdate({ userEmail: req.email }, { maxPeriod, risk, rate }, (err: Error) => {
       if (err) return res.error(err);
