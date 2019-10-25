@@ -6,6 +6,7 @@ import User from './model';
 import Offer from '../offer/model';
 
 import _ from 'lodash';
+import async from 'async';
 
 export default class UserController {
   public findAll = (req: Request, res: Response) => {
@@ -85,13 +86,28 @@ export default class UserController {
     })
   }
 
+  /**
+   * @api {post} /v1/user/top-up Top Up
+   * @apiName TopUp
+   * @apiGroup User
+   * 
+   * @apiHeader {String} Authorization Bearer token
+   * 
+   * @apiParam {Number} amount
+   */
   public topUp = (req: Request, res: Response) => {
     const { amount } = req.body;
 
-    const updateUser = User.findOneAndUpdate({ email: req.email }, { $inc: { amount } }, (err: Error) => {
+    const updateUser = (cb: Function) =>
+      User.findOneAndUpdate({ email: req.email }, { $inc: { amount } }, (err: Error) => cb(err));
+
+    const updateOffer = (cb: Function) =>
+      Offer.findOneAndUpdate({ userEmail: req.email }, { $inc: { amount } }, (err: Error) => cb(err));
+
+    async.parallel([updateUser, updateOffer], (err) => {
       if (err) return res.error(err);
 
-      res.success();
+      res.success()
     })
   }
 }

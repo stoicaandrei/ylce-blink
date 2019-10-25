@@ -5,16 +5,12 @@ import Controller from './controller';
 const user: Router = Router();
 const controller = new Controller();
 
-// Retrieve all Users
-user.get('/find-all', verifyToken, controller.findAll);
-
-// Retrieve a Specific User
+user.get('/find-all', controller.findAll);
 user.get('/:id', controller.findOne);
-
-// Delete a User with Id
 user.post('/delete/:id', controller.remove);
 
 user.post('/update', verifyToken, controller.update);
+user.post('/top-up', verifyToken, controller.topUp);
 
 
 export default user;
