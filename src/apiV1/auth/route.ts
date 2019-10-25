@@ -5,7 +5,7 @@ import Controller from './controller';
 const auth: Router = Router();
 const controller = new Controller();
 
-// Register new user
 auth.post('/register', controller.register)
+auth.post('/login', controller.authenticate)
 
 export default auth;

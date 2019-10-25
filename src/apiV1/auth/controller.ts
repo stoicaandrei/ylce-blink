@@ -4,20 +4,26 @@ import jwt from 'jsonwebtoken'
 import config from '../../config/config';
 import User, { IUser } from '../user/model';
 
-import async from 'async'
+import async from 'async';
+
+const generateToken = (data: object): string => {
+  return jwt.sign(data, config.JWT_ENCRYPTION, { expiresIn: config.JWT_EXPIRATION })
+}
 
 export default class AuthController {
   public register = (req: Request, res: Response) => {
-    const { name, lastName, email, password } = req.body;
+    const { email, password } = req.body;
 
     const hashPassword = async.apply(bcrypt.hash, password, config.SALT_ROUNDS);
-    const createUser = (hash: string, cb: Function) => User.create({ name, lastName, email, password: hash }, cb);
+    const createUser = (hash: string, cb: Function) => User.create({ email, password: hash }, cb);
 
     async.waterfall([hashPassword, createUser],
       (err, user) => {
         if (err) return res.error(err);
 
-        return res.success(user)
+        const accessToken = generateToken({ email });
+
+        return res.success({ accessToken })
       })
   }
 
@@ -35,10 +41,15 @@ export default class AuthController {
       })
     }
 
-    // const checkPassword = async.apply()
+    async.waterfall([getUser, comparePassword],
+      (err, user) => {
+        if (err) return res.error(err);
 
-    // async.parallel([
-    //   async.apply
-    // ])
+        const email = (user as IUser).email;
+        const accessToken = generateToken({ email });
+
+        return res.success({ user, accessToken })
+      }
+    )
   }
 }
