@@ -41,6 +41,10 @@ class App {
 
   private setRoutes(): void {
     this.express.use('/v1', apiV1);
+    this.express.use(
+      '/apidoc',
+      express.static(`${process.cwd()}/public/apidoc`)
+    );
   }
 
   private catchErrors(): void {

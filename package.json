@@ -1,5 +1,5 @@
 {
-  "name": "typescript-node-rest-api-boilerplate",
+  "name": "ylc-blink",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,10 +9,14 @@
     "dev": "nodemon --watch src --exec ts-node -- ./src/index.ts",
     "prod": "npm run build && npm run start",
     "clean": "rm -rf node_modules coverage dist .nyc_output",
-    "lint": "tslint -t stylish --project \"tsconfig.json\""
+    "lint": "tslint -t stylish --project \"tsconfig.json\"",
+    "apidoc": "apidoc -i src -o public/apidoc"
   },
   "engines": {
     "node": "10.x"
+  },
+  "apidoc": {
+    "title": "ylc-blink"
   },
   "author": "",
   "license": "ISC",

@@ -11,6 +11,16 @@ const generateToken = (data: object): string => {
 }
 
 export default class AuthController {
+  /**
+   * @api {post} v1/auth/register Register
+   * @apiName Register
+   * @apiGroup Auth
+   * 
+   * @apiParam {String} email
+   * @apiParam {String} password
+   * 
+   * @apiSuccess {String} accessToken
+   */
   public register = (req: Request, res: Response) => {
     const { email, password } = req.body;
 
@@ -27,6 +37,16 @@ export default class AuthController {
       })
   }
 
+  /**
+   * @api {post} v1/auth/login Login
+   * @apiName Login
+   * @apiGroup Auth
+   * 
+   * @apiParam {String} email
+   * @apiParam {String} password
+   * 
+   * @apiSuccess {String} accessToken
+   */
   public authenticate = (req: Request, res: Response) => {
     const { email, password } = req.body;
 
