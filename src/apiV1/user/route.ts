@@ -5,9 +5,8 @@ import Controller from './controller';
 const user: Router = Router();
 const controller = new Controller();
 
-user.get('/find-all', controller.findAll);
-user.get('/:id', controller.findOne);
-user.post('/delete/:id', controller.remove);
+
+user.get('/get-data', verifyToken, controller.getUserData);
 
 user.post('/update', verifyToken, controller.update);
 user.post('/top-up', verifyToken, controller.topUp);

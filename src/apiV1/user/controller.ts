@@ -152,7 +152,7 @@ export default class UserController {
   }
 
   /**
-   * @api {post} /v1/user/get-data Get User Data
+   * @api {get} /v1/user/get-data Get User Data
    * @apiName GetData
    * @apiGroup User
    * 
