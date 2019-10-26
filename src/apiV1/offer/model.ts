@@ -5,7 +5,6 @@ export interface IOffer {
   userEmail: string,
   amount: number,
   rate: number,
-  minCreditScore: number,
   maxPeriod: number,
   risk: number
 }
@@ -22,12 +21,6 @@ const OfferSchema = new Schema({
   rate: {
     type: Number,
     min: 1
-  },
-
-  minCreditScore: {
-    type: Number,
-    min: 1,
-    max: 5
   },
 
   maxPeriod: {

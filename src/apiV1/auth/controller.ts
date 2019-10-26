@@ -5,6 +5,7 @@ import config from '../../config/config';
 import User, { IUser } from '../user/model';
 
 import async from 'async';
+import _ from 'lodash';
 
 const generateToken = (data: object): string => {
   return jwt.sign(data, config.JWT_ENCRYPTION, { expiresIn: config.JWT_EXPIRATION })
@@ -30,8 +31,12 @@ export default class AuthController {
     if (!firstName || !lastName || !email || !password)
       return res.error('firstName, lastName, email, password required', 400);
 
+    const creditScore = _.random(1.0, 5.0);
+
     const hashPassword = async.apply(bcrypt.hash, password, config.SALT_ROUNDS);
-    const createUser = (hash: string, cb: Function) => User.create({ firstName, lastName, email, password: hash }, cb);
+
+    const createUser = (hash: string, cb: Function) =>
+      User.create({ firstName, lastName, email, creditScore, password: hash }, cb);
 
     async.waterfall([hashPassword, createUser],
       (err, user) => {
