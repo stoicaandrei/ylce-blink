@@ -48,6 +48,7 @@ export default class OfferController {
 
       if (!offer) offer = new Offer();
 
+      offer.userEmail = req.email;
       offer.maxPeriod = maxPeriod;
       offer.minCreditScore = minCreditScore;
       offer.rate = rate;
