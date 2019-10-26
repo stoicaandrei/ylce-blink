@@ -100,9 +100,10 @@ export default class LoanController {
     }
 
     async.waterfall([getUser, getAllOffers, calculateOffer], (err, loan) => {
-      if (err) return res.error(err);
-      console.log((err as any).message);
-
+      if (err) {
+        console.log((err as any).message);
+        return res.error(err);
+      }
       (loan as any).backers = undefined;
 
       res.success({ loan });
