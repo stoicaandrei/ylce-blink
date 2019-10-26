@@ -8,6 +8,10 @@ import Lending, { ILending } from '../lending/model';
 import async from 'async';
 import moment from 'moment';
 
+const map = (n: number, start1: number, stop1: number, start2: number, stop2: number) => {
+  return ((n - start1) / (stop1 - start1)) * (stop2 - start2) + start2;
+};
+
 export default class LoanController {
   /**
    * @api {get} /v1/loan/get-offer Get loan offer
@@ -42,19 +46,29 @@ export default class LoanController {
     amount = parseInt(amount);
     period = parseInt(period);
 
+    let ticket: number;
+
     if (!amount || !period)
       return res.error('amount, period required', 400);
 
     const getUser = (cb: Function) => User.findOne({ email: req.email }, 'creditScore', cb);
 
-    const getAllOffers = (user: IUser, cb: Function) => Offer.find(
-      {
-        risk: { $gte: 6 - user.creditScore },
-        maxPeriod: { $gte: period },
-        userEmail: { $ne: req.email },
-        amount: { $gte: 0 }
-      }
-    ).sort({ rate: 1 }).exec(cb);
+    const getAllOffers = (user: IUser, cb: Function) => {
+      ticket = 20 * user.creditScore;
+
+      const maxAmount = user.creditScore * 2000;
+
+      if (amount > maxAmount) return res.error('Max amount exceed for your credit score', 400);
+
+      Offer.find(
+        {
+          risk: { $gte: 6 - user.creditScore },
+          maxPeriod: { $gte: period },
+          userEmail: { $ne: req.email },
+          amount: { $gte: 0 }
+        }
+      ).sort({ rate: 1 }).exec(cb);
+    }
 
     const calculateOffer = (offers: IOffer[], cb: Function) => {
       let denominator = 0;
@@ -67,15 +81,15 @@ export default class LoanController {
         if (nominator >= amount)
           break;
 
-        if (nominator + offer.amount > amount)
-          offer.amount = amount - nominator;
+        if (nominator + ticket > amount)
+          ticket = amount - nominator;
 
-        nominator += offer.amount;
-        denominator += offer.amount * offer.rate;
+        nominator += ticket;
+        denominator += ticket * offer.rate;
 
         backers.push({
           userEmail: offer.userEmail,
-          amount: offer.amount,
+          amount: ticket,
           rate: offer.rate
         });
       }
@@ -102,7 +116,6 @@ export default class LoanController {
 
     async.waterfall([getUser, getAllOffers, calculateOffer], (err, loan) => {
       if (err) {
-        console.log((err as any).message);
         return res.error(err);
       }
       (loan as any).backers = undefined;

@@ -21,7 +21,6 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
     if (err) return res.error(err);
 
     req.email = (decoded as jwtResponse).email;
-    console.log('decoded email ', req.email);
     next();
   })
 };

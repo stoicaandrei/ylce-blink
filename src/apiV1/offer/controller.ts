@@ -64,7 +64,7 @@ export default class OfferController {
     Offer.findOneAndUpdate({ userEmail: req.email }, { maxPeriod, risk, rate }, (err: Error) => {
       if (err) return res.error(err);
 
-      res.success()
+      res.success();
     })
   }
 }
