@@ -25,7 +25,7 @@ export default class OfferController {
     } = req.body;
 
     if (!maxPeriod || !risk || !rate)
-      return res.error('maxPeriod, risk, rate required');
+      return res.error('maxPeriod, risk, rate required', 400);
 
     const getUser = (cb: Function) => User.findOne({ email: req.email }, 'amount', cb);
 
@@ -58,7 +58,7 @@ export default class OfferController {
     } = req.body;
 
     if (!maxPeriod || !risk || !rate)
-      return res.error('maxPeriod, risk, rate required');
+      return res.error('maxPeriod, risk, rate required', 400);
 
     Offer.findOneAndUpdate({ userEmail: req.email }, { maxPeriod, risk, rate }, (err: Error) => {
       if (err) return res.error(err);

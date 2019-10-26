@@ -7,7 +7,7 @@ const success = function (this: Response, data: any = null) {
   });
 }
 
-const error = function (this: Response, err: any = 'Unexpected error occurred.', status = 400) {
+const error = function (this: Response, err: any = 'Unexpected error occurred.', status = 500) {
   this.status(status).send({
     success: false,
     message: (err instanceof Error ? err.message : err.toString()),

@@ -39,9 +39,10 @@ export default class LoanController {
     } = req.query;
 
     amount = parseInt(amount);
+    period = parseInt(period);
 
     if (!amount || !period)
-      return res.error('amount, period required');
+      return res.error('amount, period required', 400);
 
     const getUser = (cb: Function) => User.findOne({ email: req.email }, 'creditScore', cb);
 

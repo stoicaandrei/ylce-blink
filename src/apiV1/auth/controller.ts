@@ -28,7 +28,7 @@ export default class AuthController {
     const { firstName, lastName, email, password } = req.body;
 
     if (!firstName || !lastName || !email || !password)
-      return res.error('firstName, lastName, email, password required');
+      return res.error('firstName, lastName, email, password required', 400);
 
     const hashPassword = async.apply(bcrypt.hash, password, config.SALT_ROUNDS);
     const createUser = (hash: string, cb: Function) => User.create({ firstName, lastName, email, password: hash }, cb);
@@ -58,7 +58,7 @@ export default class AuthController {
     const { email, password } = req.body;
 
     if (!email || !password)
-      return res.error('email, password required');
+      return res.error('email, password required', 400);
 
     const getUser = (cb: Function) => User.findOne({ email }, '-password -createdAt -updatedAt', cb);
     const comparePassword = (user: IUser, cb: Function) => {

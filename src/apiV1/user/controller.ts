@@ -77,7 +77,7 @@ export default class UserController {
     // cleaned data
     const data = _.omitBy(_data, _.isUndefined);
 
-    if (_.isEmpty(data)) return res.error('Empty arguments');
+    if (_.isEmpty(data)) return res.error('Empty arguments', 400);
 
     User.findOneAndUpdate({ email: req.email }, data, (err) => {
       if (err) return res.error(err);
