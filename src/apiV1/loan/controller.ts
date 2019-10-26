@@ -154,6 +154,8 @@ export default class LoanController {
       Loan.findById(loanId, cb);
 
     const takeMoney = (loan: ILoan, cb: any) => {
+      if (!loan) return res.error('Loan not found', 400);
+
       async.each(loan.backers, (lending: any, cb: any) => {
 
         const createLending = (cb: any) =>
