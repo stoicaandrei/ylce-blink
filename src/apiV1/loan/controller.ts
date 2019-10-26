@@ -26,8 +26,9 @@ export default class LoanController {
    *  loan: {
    *    amount: Number,
    *    rate: Number,
-   *    period: NUmber,
-   *    dueDate: Date
+   *    period: Number,
+   *    dueDate: Date,
+   *    paybackAmount: Number
    *  }
    * }
    */
@@ -75,17 +76,20 @@ export default class LoanController {
         });
       }
 
-      const rate = (denominator / nominator).toFixed(2);
+      let rate = (denominator / nominator);
 
       const dueDate = moment().add(`${period} months`);
+
+      let paybackAmount = amount + amount * (rate / 12) * 3;
 
       Loan.create({
         approved: false,
         userEmail: req.email,
         amount: nominator,
-        rate,
+        rate: rate.toFixed(2),
         period,
         dueDate,
+        paybackAmount: paybackAmount.toFixed(2),
         backers
       }, cb);
     }

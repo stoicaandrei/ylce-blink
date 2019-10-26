@@ -8,6 +8,7 @@ export interface ILoan {
   rate: number,
   period: number,
   dueDate: Date,
+  paybackAmount: number,
   backers: [{
     userEmail: string,
     amount: number,
@@ -40,6 +41,10 @@ const LoanSchema = new Schema({
 
   dueDate: {
     type: Date
+  },
+
+  paybackAmount: {
+    type: Number
   },
 
   backers: [{
