@@ -24,6 +24,7 @@ export default class LoanController {
    * @apiSuccessExample {json} Success-Example:
    * {
    *  loan: {
+   *    _id: String,
    *    amount: Number,
    *    rate: Number,
    *    period: Number,
@@ -118,6 +119,20 @@ export default class LoanController {
    * @apiHeader {String} Authorization Bearer token
    * 
    * @apiParam {String} loanId
+   * 
+   * @apiSuccess {Object} loan
+   * 
+   * @apiSuccessExample {json} Success-Example:
+   * {
+   *  loan: {
+   *    _id: String,
+   *    amount: Number,
+   *    rate: Number,
+   *    period: Number,
+   *    dueDate: Date,
+   *    paybackAmount: Number
+   *  }
+   * }
    */
   public approveOffer = (req: Request, res: Response) => {
     const { loanId } = req.body;
@@ -168,10 +183,10 @@ export default class LoanController {
         cb);
 
 
-    async.waterfall([getLoan, takeMoney, giveMoney, approveLoan], (err) => {
+    async.waterfall([getLoan, takeMoney, giveMoney, approveLoan], (err, loan) => {
       if (err) return res.error(err);
 
-      res.success()
+      res.success({ loan })
     })
   }
 
