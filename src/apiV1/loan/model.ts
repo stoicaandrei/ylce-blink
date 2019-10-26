@@ -1,13 +1,18 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 
-interface ILoan {
+export interface ILoan {
   approved: boolean,
-  userId: Schema.Types.ObjectId,
+  userEmail: string,
   amount: number,
   rate: number,
   period: number,
-  dueDate: Date
+  dueDate: Date,
+  backers: [{
+    userEmail: string,
+    amount: number,
+    rate: number
+  }]
 }
 
 const LoanSchema = new Schema({
@@ -15,7 +20,9 @@ const LoanSchema = new Schema({
     type: Boolean
   },
 
-  userId: Schema.Types.ObjectId,
+  userId: {
+    type: String
+  },
 
   amount: {
     type: Number
@@ -34,6 +41,12 @@ const LoanSchema = new Schema({
   dueDate: {
     type: Date
   },
+
+  backers: [{
+    userEmail: String,
+    amount: Number,
+    rate: Number
+  }]
 }, {
   timestamps: true,
   useNestedStrict: true

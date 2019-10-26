@@ -1,12 +1,13 @@
 import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 
-interface IOffer {
+export interface IOffer {
   userEmail: string,
   amount: number,
   rate: number,
   minCreditScore: number,
-  maxPeriod: number
+  maxPeriod: number,
+  risk: number
 }
 
 const OfferSchema = new Schema({
