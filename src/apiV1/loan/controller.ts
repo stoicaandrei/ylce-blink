@@ -62,7 +62,7 @@ export default class LoanController {
 
       Offer.find(
         {
-          risk: { $gte: 6 - user.creditScore },
+          minCreditScore: { $gte: user.creditScore },
           maxPeriod: { $gte: period },
           userEmail: { $ne: req.email },
           amount: { $gte: 0 }

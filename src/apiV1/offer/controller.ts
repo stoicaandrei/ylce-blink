@@ -8,39 +8,6 @@ import _ from 'lodash';
 
 export default class OfferController {
   /**
-   * @api {post} /v1/offer/create Create new offer
-   * @apiName Create
-   * @apiGroup Offer
-   * 
-   * @apiHeader {String} Authorization Bearer token
-   * 
-   * @apiParam {Number} maxPeriod (months) min: 1
-   * @apiParam {Number} risk min: 1, max: 5
-   * @apiParam {Number} rate min: 1
-   */
-  public create = (req: Request, res: Response) => {
-    const {
-      maxPeriod,
-      risk,
-      rate
-    } = req.body;
-
-    if (!maxPeriod || !risk || !rate)
-      return res.error('maxPeriod, risk, rate required', 400);
-
-    const getUser = (cb: Function) => User.findOne({ email: req.email }, 'amount', cb);
-
-    const createOffer = (user: IUser, cb: Function) =>
-      Offer.create({ userEmail: req.email, maxPeriod, risk, rate, amount: user.amount }, cb)
-
-    async.waterfall([getUser, createOffer], (err) => {
-      if (err) return res.error(err);
-
-      res.success()
-    })
-  }
-
-  /**
    * @api {post} /v1/offer/update Update the offer
    * @apiName Update
    * @apiGroup Offer
@@ -54,17 +21,43 @@ export default class OfferController {
   public update = (req: Request, res: Response) => {
     const {
       maxPeriod,
-      risk,
+      minCreditScore,
       rate
     } = req.body;
 
-    if (!maxPeriod || !risk || !rate)
-      return res.error('maxPeriod, risk, rate required', 400);
+    if (!maxPeriod || !minCreditScore || !rate)
+      return res.error('maxPeriod, minCreditScore, rate required', 400);
 
-    Offer.findOneAndUpdate({ userEmail: req.email }, { maxPeriod, risk, rate }, (err: Error) => {
+    const getUser = (cb: Function) =>
+      User.findOne(
+        { email: req.email },
+        'amount',
+        cb
+      )
+
+    const getOffer = (cb: Function) =>
+      Offer.findOne({ userEmail: req.email }, cb);
+
+    async.parallel([getUser, getOffer], (err, data) => {
       if (err) return res.error(err);
 
-      res.success();
+      if (!data) return res.error();
+
+      const amount = (data as any)[0].amount;
+      let offer = (data as any)[1];
+
+      if (!offer) offer = new Offer();
+
+      offer.maxPeriod = maxPeriod;
+      offer.minCreditScore = minCreditScore;
+      offer.rate = rate;
+      offer.amount = amount;
+
+      offer.save((err: Function) => {
+        if (err) return res.error(err);
+
+        return res.success();
+      })
     })
   }
 }
