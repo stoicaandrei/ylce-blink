@@ -169,6 +169,39 @@ export default class LoanController {
     })
   }
 
+  /**
+   * @api {get} /v1/loan/get-loans Get loans
+   * @apiName GetLoans
+   * @apiGroup Loan
+   * 
+   * @apiHeader {String} Authorization Bearer token
+   * 
+   * 
+   * @apiSuccess {Object[]} loans
+   * 
+   * @apiSuccessExample {json} Success-Example:
+   * {
+   *  loan: [{
+   *    _id: String,
+   *    amount: Number,
+   *    paybackAmount: Number,
+   *    rate: Number,
+   *    period: Number,
+   *    dueDate: Date,
+   *  }]
+   * }
+   */
+  public getLoans = (req: Request, res: Response) => {
+    Loan.find(
+      { userEmail: req.email },
+      'amount paybackAmount rate period dueDate',
+      (err: Error, loans: ILoan[]) => {
+        if (err) return res.error(err);
+
+        res.success({ loans })
+      })
+  }
+
   public getAll = (req: Request, res: Response) => {
     res.success({
       loans: [
