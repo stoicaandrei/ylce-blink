@@ -224,7 +224,7 @@ export default class UserController {
     const getOffer = (cb: Function) =>
       Offer.findOne({ userEmail: req.email }, cb);
 
-    async.parallel([getUser, getLendings], (err, data) => {
+    async.parallel([getUser, getLendings, getOffer], (err, data) => {
       if (err) return res.error(err);
 
       if (!data) return res.error();
