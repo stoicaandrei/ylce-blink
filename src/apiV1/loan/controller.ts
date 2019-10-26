@@ -128,7 +128,8 @@ export default class LoanController {
             loanId,
             ...lending, // userEmail, amount, rate
             period: loan.period,
-            dueDate: loan.dueDate
+            dueDate: loan.dueDate,
+            paybackAmount: loan.paybackAmount
           }, cb);
 
         const decreaseUserMoney = (cb: any) =>
@@ -175,7 +176,6 @@ export default class LoanController {
    * @apiGroup Loan
    * 
    * @apiHeader {String} Authorization Bearer token
-   * 
    * 
    * @apiSuccess {Object[]} loans
    * 

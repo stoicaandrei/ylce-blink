@@ -7,7 +7,8 @@ export interface ILending {
   amount: number,
   rate: number,
   minCreditScore: number,
-  maxPeriod: number
+  maxPeriod: number,
+  paybackAmount: number
 }
 
 const LendingSchema = new Schema({
@@ -37,6 +38,10 @@ const LendingSchema = new Schema({
   dueDate: {
     type: Date
   },
+
+  paybackAmount: {
+    type: Number
+  }
 }, {
   timestamps: true,
   useNestedStrict: true
