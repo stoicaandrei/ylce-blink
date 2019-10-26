@@ -163,13 +163,13 @@ export default class UserController {
    * @apiSuccessExample {json} Success-Example:
    * {
    *  user: {
-    *   email: string,
-        birthDate: Date,
-        country: string,
-        employmentIndustry: string,
-        incomeBracket: string,
-        amount: number,
-        creditScore: number,
+   *   email: String,
+   *   birthDate: Date,
+   *   country: String,
+   *   employmentIndustry: String,
+   *   incomeBracket: String,
+   *   amount: Number,
+   *   creditScore: Number,
    *  }
    * }
    */
