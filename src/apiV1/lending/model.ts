@@ -2,8 +2,8 @@ import * as mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 
 export interface ILending {
-  userId: Schema.Types.ObjectId,
-  loanId: Schema.Types.ObjectId,
+  userEmail: string,
+  loanId: string,
   amount: number,
   rate: number,
   minCreditScore: number,
@@ -11,9 +11,13 @@ export interface ILending {
 }
 
 const LendingSchema = new Schema({
-  userId: Schema.Types.ObjectId,
+  userEmail: {
+    type: String
+  },
 
-  loanId: Schema.Types.ObjectId,
+  loanId: {
+    type: String
+  },
 
   amount: {
     type: Number,

@@ -20,7 +20,7 @@ const LoanSchema = new Schema({
     type: Boolean
   },
 
-  userId: {
+  userEmail: {
     type: String
   },
 

@@ -6,7 +6,8 @@ const loan: Router = Router();
 const controller = new Controller();
 
 loan.get('/get-offer', verifyToken, controller.getOffer);
-
 loan.get('/get-all', controller.getAll)
+
+loan.post('/approve', verifyToken, controller.approveOffer);
 
 export default loan;

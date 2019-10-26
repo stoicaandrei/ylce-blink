@@ -3,13 +3,14 @@ import { Request, Response } from 'express';
 import Offer, { IOffer } from '../offer/model';
 import User, { IUser } from '../user/model';
 import Loan, { ILoan } from './model';
+import Lending from '../lending/model';
 
 import async from 'async';
 import moment from 'moment';
 
 export default class LoanController {
   /**
-   * @api {post} /v1/loan/get-offer Get loan offer
+   * @api {get} /v1/loan/get-offer Get loan offer
    * @apiName GetOffer
    * @apiGroup Loan
    * 
@@ -17,6 +18,18 @@ export default class LoanController {
    * 
    * @apiParam {Number} amount
    * @apiParam {Number} period (months) min: 1
+   * 
+   * @apiSuccess {Object} loan
+   * 
+   * @apiSuccessExample {json} Success-Example:
+   * {
+   *  loan: {
+   *    amount: Number,
+   *    rate: Number,
+   *    period: NUmber,
+   *    dueDate: Date
+   *  }
+   * }
    */
   public getOffer = (req: Request, res: Response) => {
     const {
@@ -33,7 +46,8 @@ export default class LoanController {
       {
         risk: { $gte: 6 - user.creditScore },
         maxPeriod: { $gte: period },
-        userEmail: { $ne: req.email }
+        userEmail: { $ne: req.email },
+        amount: { $gte: 0 }
       }
     ).sort({ rate: 1 }).exec(cb);
 
@@ -79,10 +93,76 @@ export default class LoanController {
     async.waterfall([getUser, getAllOffers, calculateOffer], (err, loan) => {
       if (err) return res.error(err);
 
+      console.log((loan as any).backers);
+
       (loan as any).backers = undefined;
 
       res.success({ loan });
     });
+  }
+
+  /**
+   * @api {get} /v1/loan/approve Approve Loan
+   * @apiName Approve Loan
+   * @apiGroup Loan
+   * 
+   * @apiHeader {String} Authorization Bearer token
+   * 
+   * @apiParam {String} loanId
+   */
+  public approveOffer = (req: Request, res: Response) => {
+    const { loanId } = req.body;
+
+    const getLoan = (cb: any) =>
+      Loan.findById(loanId, cb);
+
+    const takeMoney = (loan: ILoan, cb: any) => {
+      async.each(loan.backers, (lending: any, cb: any) => {
+
+        const createLending = (cb: any) =>
+          Lending.create({
+            loanId,
+            ...lending, // userEmail, amount, rate
+            period: loan.period,
+            dueDate: loan.dueDate
+          }, cb);
+
+        const decreaseUserMoney = (cb: any) =>
+          User.findOneAndUpdate(
+            { email: lending.userEmail },
+            { $inc: { amount: lending.amount * -1 } },
+            cb);
+
+        const decreaseOfferMoney = (cb: any) =>
+          Offer.findOneAndUpdate(
+            { userEmail: lending.userEmail },
+            { $inc: { amount: lending.amount * -1 } },
+            cb
+          )
+
+        async.parallel([createLending, decreaseUserMoney, decreaseOfferMoney], cb);
+
+      }, (err) => cb(err, loan))
+    }
+
+    const giveMoney = (loan: ILoan, cb: any) =>
+      User.findOneAndUpdate(
+        { email: loan.userEmail },
+        { $inc: { amount: loan.amount } },
+        (err) => cb(err));
+
+    const approveLoan = (cb: any) =>
+      Loan.findByIdAndUpdate(
+        loanId,
+        { approved: true, backers: undefined },
+        cb);
+
+
+    async.waterfall([getLoan, takeMoney, giveMoney, approveLoan], (err) => {
+      if (err) return res.error(err);
+
+      res.success()
+    })
   }
 
   public getAll = (req: Request, res: Response) => {
