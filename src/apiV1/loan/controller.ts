@@ -150,6 +150,8 @@ export default class LoanController {
   public approveOffer = (req: Request, res: Response) => {
     const { loanId } = req.body;
 
+    if (!loanId) return res.error('loanId required', 400);
+
     const getLoan = (cb: any) =>
       Loan.findById(loanId, cb);
 
