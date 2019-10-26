@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import Offer, { IOffer } from '../offer/model';
 import User, { IUser } from '../user/model';
 import Loan, { ILoan } from './model';
-import Lending from '../lending/model';
+import Lending, { ILending } from '../lending/model';
 
 import async from 'async';
 import moment from 'moment';
@@ -106,7 +106,7 @@ export default class LoanController {
   }
 
   /**
-   * @api {get} /v1/loan/approve Approve Loan
+   * @api {post} /v1/loan/approve Approve Loan
    * @apiName Approve Loan
    * @apiGroup Loan
    * 
@@ -202,18 +202,23 @@ export default class LoanController {
       })
   }
 
-  /**
-   * @api {post} /v1/loan/pay-loans Pay loan
-   * @apiName PayLoan
-   * @apiGroup Loan
-   * 
-   * @apiHeader {String} Authorization Bearer token
-   * 
-   * @apiParam {string} loanId
-   */
-  public payLoan = (req: Request, res: Response) => {
-    const { loanId } = req.body;
-  }
+  // public payLoan = (req: Request, res: Response) => {
+  //   const { loanId } = req.body;
+
+  //   const getLoan = (cb: Function) => Loan.findById(loanId, cb);
+  //   const getUser = (cb: Function) => User.findOne({ email: req.email }, 'amount', cb);
+
+  //   const getLendings = (cb: Function) => Lending.find({ loanId }, cb)
+
+  //   const payBackers = (lendings: ILending[], cb: any) => {
+
+  //     async.each(lendings, (lending: ILending, cb: any) => {
+
+  //       User.findOneAndUpdate({ email: lending.userEmail }, { $inc: { amount: lending.amount } }, cb);
+
+  //     }, cb)
+  //   }
+  // }
 
   public getAll = (req: Request, res: Response) => {
     res.success({
