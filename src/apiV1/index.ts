@@ -10,6 +10,7 @@ const router = Router();
 router.use('/auth', auth);
 router.use('/user', user);
 router.use('/offer', offer);
-router.use('/lending', lending)
+router.use('/loan', loan);
+router.use('/lending', lending);
 
 export default router;

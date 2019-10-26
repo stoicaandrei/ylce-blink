@@ -33,10 +33,12 @@ export default class LoanController {
    * }
    */
   public getOffer = (req: Request, res: Response) => {
-    const {
+    let {
       amount,
       period
     } = req.query;
+
+    amount = parseInt(amount);
 
     if (!amount || !period)
       return res.error('amount, period required');
@@ -76,11 +78,11 @@ export default class LoanController {
         });
       }
 
-      let rate = (denominator / nominator);
+      const rate = (denominator / nominator);
 
       const dueDate = moment().add(`${period} months`);
 
-      let paybackAmount = amount + amount * (rate / 12) * 3;
+      const paybackAmount = amount + amount * (rate / 12 / 100) * 3;
 
       Loan.create({
         approved: false,
@@ -96,8 +98,6 @@ export default class LoanController {
 
     async.waterfall([getUser, getAllOffers, calculateOffer], (err, loan) => {
       if (err) return res.error(err);
-
-      console.log((loan as any).backers);
 
       (loan as any).backers = undefined;
 
@@ -200,6 +200,19 @@ export default class LoanController {
 
         res.success({ loans })
       })
+  }
+
+  /**
+   * @api {post} /v1/loan/pay-loans Pay loan
+   * @apiName PayLoan
+   * @apiGroup Loan
+   * 
+   * @apiHeader {String} Authorization Bearer token
+   * 
+   * @apiParam {string} loanId
+   */
+  public payLoan = (req: Request, res: Response) => {
+    const { loanId } = req.body;
   }
 
   public getAll = (req: Request, res: Response) => {
