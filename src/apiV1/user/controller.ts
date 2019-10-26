@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import config from '../../config/config';
 
-import User from './model';
+import User, { IUser } from './model';
 import Offer from '../offer/model';
 
 import _ from 'lodash';
@@ -94,12 +94,19 @@ export default class UserController {
    * @apiHeader {String} Authorization Bearer token
    * 
    * @apiParam {Number} amount
+   * 
+   * @apiSuccess {Number} newAmount
    */
   public topUp = (req: Request, res: Response) => {
     const { amount } = req.body;
 
+    let newAmount: number;
+
     const updateUser = (cb: Function) =>
-      User.findOneAndUpdate({ email: req.email }, { $inc: { amount } }, (err: Error) => cb(err));
+      User.findOneAndUpdate({ email: req.email }, { $inc: { amount } }, { new: true }, (err, user) => {
+        newAmount = (user as any).amount;
+        cb(err);
+      });
 
     const updateOffer = (cb: Function) =>
       Offer.findOneAndUpdate({ userEmail: req.email }, { $inc: { amount } }, (err: Error) => cb(err));
@@ -107,7 +114,7 @@ export default class UserController {
     async.parallel([updateUser, updateOffer], (err) => {
       if (err) return res.error(err);
 
-      res.success()
+      res.success({ newAmount })
     })
   }
 
@@ -119,13 +126,20 @@ export default class UserController {
    * @apiHeader {String} Authorization Bearer token
    * 
    * @apiParam {Number} amount
+   * 
+   * @apiSuccess {Number} newAmount
    */
   public withdraw = (req: Request, res: Response) => {
     let { amount } = req.body;
     amount *= -1;
 
+    let newAmount: number;
+
     const updateUser = (cb: Function) =>
-      User.findOneAndUpdate({ email: req.email }, { $inc: { amount } }, (err: Error) => cb(err));
+      User.findOneAndUpdate({ email: req.email }, { $inc: { amount } }, { new: true }, (err, user) => {
+        newAmount = (user as any).amount;
+        cb(err);
+      });
 
     const updateOffer = (cb: Function) =>
       Offer.findOneAndUpdate({ userEmail: req.email }, { $inc: { amount } }, (err: Error) => cb(err));
@@ -133,7 +147,42 @@ export default class UserController {
     async.parallel([updateUser, updateOffer], (err) => {
       if (err) return res.error(err);
 
-      res.success()
+      res.success({ newAmount })
     })
+  }
+
+  /**
+   * @api {post} /v1/user/get-data Get User Data
+   * @apiName GetData
+   * @apiGroup User
+   * 
+   * @apiHeader {String} Authorization Bearer token
+   * 
+   * @apiSuccess {Object} User
+   * 
+   * @apiSuccessExample {json} Success-Example:
+   * {
+   *  user: {
+    *   email: string,
+        birthDate: Date,
+        country: string,
+        employmentIndustry: string,
+        incomeBracket: string,
+        amount: number,
+        creditScore: number,
+   *  }
+   * }
+   */
+  public getUserData = (req: Request, res: Response) => {
+    User.findOne(
+      { email: req.email },
+      '-password -createdAt -updatedAt',
+      (err: Error, user: IUser) => {
+        if (err) return res.error(err);
+
+        if (!user) return res.error('User not found', 404);
+
+        res.success({ user });
+      })
   }
 }
