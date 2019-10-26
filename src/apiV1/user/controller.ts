@@ -3,7 +3,8 @@ import { Request, Response } from 'express';
 import config from '../../config/config';
 
 import User, { IUser } from './model';
-import Offer from '../offer/model';
+import Offer, { IOffer } from '../offer/model';
+import Lending, { ILending } from '../lending/model';
 
 import _ from 'lodash';
 import async from 'async';
@@ -184,5 +185,79 @@ export default class UserController {
 
         res.success({ user });
       })
+  }
+
+  /**
+   * @api {get} /v1/user/get-lender-data Get Lender Data
+   * @apiName GetLenderData
+   * @apiGroup User
+   * 
+   * @apiHeader {String} Authorization Bearer token
+   * 
+   * @apiSuccess {Number} cash
+   * @apiSuccess {Number} investedAmount
+   * @apiSuccess {Object} offer
+   * 
+   * @apiSuccessExample {json} Success-Example:
+   * {
+   *  offer: {
+   *    amount: Number,
+   *    rate: Number,
+   *    maxPeriod: Number,
+   *    minCreditScore: Number
+   *  }
+   * }
+   */
+  public getLenderData = (req: Request, res: Response) => {
+    const getUser = (cb: Function) =>
+      User.findOne(
+        { email: req.email },
+        'amount',
+        cb);
+
+    const getLendings = (cb: Function) =>
+      Lending.find(
+        { userEmail: req.email },
+        'amount paybackAmount rate period dueDate',
+        cb);
+
+    const getOffer = (cb: Function) =>
+      Offer.findOne({ userEmail: req.email }, cb);
+
+    async.parallel([getUser, getLendings], (err, data) => {
+      if (err) return res.error(err);
+
+      if (!data) return res.error();
+
+      const user: IUser = (data as any)[0];
+      const lendings: ILending[] = (data as any)[1];
+      let offer: any = (data as any)[2];
+
+      if (!user || !lendings) return res.error();
+
+      if (!offer)
+        offer = {
+          amount: 0,
+          rate: 0,
+          maxPeriod: 0,
+          minCreditScore: 0
+        }
+
+      let investedAmount = 0;
+      let avgRate = '';
+
+      for (let i = 0; i < lendings.length; i++) {
+        const lending = lendings[0];
+
+        investedAmount += lending.amount;
+      }
+
+      res.success({
+        cash: user.amount,
+        investedAmount,
+
+        offer
+      })
+    })
   }
 }

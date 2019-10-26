@@ -6,7 +6,7 @@ export interface ILending {
   loanId: string,
   amount: number,
   rate: number,
-  maxPeriod: number,
+  period: number,
   paybackAmount: number
 }
 

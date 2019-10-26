@@ -7,6 +7,7 @@ const controller = new Controller();
 
 
 user.get('/get-data', verifyToken, controller.getUserData);
+user.get('/get-lender-data', verifyToken, controller.getLenderData);
 
 user.post('/update', verifyToken, controller.update);
 user.post('/top-up', verifyToken, controller.topUp);
