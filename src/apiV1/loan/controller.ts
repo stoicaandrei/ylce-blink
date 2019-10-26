@@ -79,6 +79,8 @@ export default class LoanController {
         });
       }
 
+      if (nominator === 0) return res.error('not enough lenders for this amount', 400);
+
       const rate = (denominator / nominator);
 
       const dueDate = moment().add(`${period} months`);
@@ -99,6 +101,7 @@ export default class LoanController {
 
     async.waterfall([getUser, getAllOffers, calculateOffer], (err, loan) => {
       if (err) return res.error(err);
+      console.log((err as any).message);
 
       (loan as any).backers = undefined;
 
