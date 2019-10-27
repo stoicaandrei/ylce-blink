@@ -196,7 +196,7 @@ export default class LoanController {
     const approveLoan = (cb: any) =>
       Loan.findByIdAndUpdate(
         loanId,
-        { approved: true, backers: undefined },
+        { approved: true },
         cb);
 
 
@@ -258,36 +258,11 @@ export default class LoanController {
   // }
 
   public getAll = (req: Request, res: Response) => {
-    res.success({
-      loans: [
-        {
-          _id: "1000",
-          amount: 2000,
-          period: 12,
-          rate: 10,
-          timestamp: new Date(),
-          lenders: [
-            {
-              _id: "2000",
-              amount: 100,
-              period: 6,
-              rate: 10
-            },
-            {
-              _id: "2001",
-              amount: 300,
-              period: 3,
-              rate: 10
-            },
-            {
-              _id: "2002",
-              amount: 1600,
-              period: 12,
-              rate: 10
-            }
-          ]
-        }
-      ]
+    Loan.find({ approved: true }, (err, loans) => {
+      if (err) return res.error(err);
+
+      res.success({ loans })
     })
+
   }
 }
