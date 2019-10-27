@@ -65,7 +65,7 @@ export default class LoanController {
           minCreditScore: { $gte: user.creditScore },
           maxPeriod: { $gte: period },
           userEmail: { $ne: req.email },
-          amount: { $gte: 0 }
+          amount: { $gte: ticket }
         }
       ).sort({ rate: 1 }).exec(cb);
     }
